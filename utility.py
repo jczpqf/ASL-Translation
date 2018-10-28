@@ -20,3 +20,9 @@ def load_data(data_path, mode='r'):
             X.append(np.load(data_path + '\\' + label + '\\' +
                              file, mmap_mode=mode))
     return np.array(X), np.array(y)
+
+
+def one_hot(one_index, size):
+    z = np.zeros(size)
+    z[one_index] = 1
+    return z
