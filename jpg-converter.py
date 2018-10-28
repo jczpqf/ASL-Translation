@@ -8,17 +8,26 @@ Takes command line arguments
 """
 
 import os
-import sys
+import argparse
 import numpy as np
 from PIL import Image
 
-image_dir = 'raw_images'
-new_dir = 'greyscale_images'
+parser = argparse.ArgumentParser(description='Parse potential arguments')
+parser.add_argument(
+    '--image_dir', type=str, help='the directory of the image',
+    default='raw_images')
+parser.add_argument(
+    '--new_dir', type=str, help='the new director of the new images',
+    default='grey_images')
+parser.add_argument(
+    '--sub_dir_labels', type=bool, default=True
+)
 
-if len(sys.argv) >= 2:
-    new_dir = sys.argv[1]
-if len(sys.argv) >= 2:
-    image_dir = sys.argv[0]
+args = parser.parse_args()
+
+image_dir = args.image_dir
+new_dir = args.new_dir
+sub_dir_labels = args.sub_dir_labels
 
 
 def remove_extension(file_name):
@@ -32,21 +41,31 @@ def remove_extension(file_name):
 
 
 root_dir = os.getcwd()
+path_labels = os.listdir(root_dir + '\\' + image_dir)
 try:
     os.mkdir(root_dir + '\\' + new_dir)
 except FileExistsError:  # if directory already exists thats ok
     pass
-path_labels = os.listdir(root_dir + '\\' + image_dir)
-for label in path_labels:
-    try:
-        os.mkdir(root_dir + '\\' + new_dir + '\\' + label)
-    except FileExistsError:  # if directory already exists thats ok
-        pass
-    files = os.listdir(root_dir + '\\' + image_dir + '\\' + label)
+if sub_dir_labels:
+    for label in path_labels:
+        try:
+            os.mkdir(root_dir + '\\' + new_dir + '\\' + label)
+        except FileExistsError:  # if directory already exists thats ok
+            pass
+        files = os.listdir(root_dir + '\\' + image_dir + '\\' + label)
+        for file in files:
+            img = Image.open(root_dir + '\\' + image_dir + '\\' +
+                             label + '\\' + file)  # open image
+            img = img.convert('L')  # convert image to greyscale
+            img = np.array(img)  # convert image to numpy array
+            np.save(root_dir + '\\' + new_dir + '\\' +
+                    label + '\\' + remove_extension(file), img)
+else:
+    files = os.listdir(root_dir + '\\' + image_dir)
     for file in files:
-        img = Image.open(root_dir + '\\' + image_dir + '\\' +
-                         label + '\\' + file)  # open image
+        # open image
+        img = Image.open(root_dir + '\\' + image_dir + '\\' + file)
+
         img = img.convert('L')  # convert image to greyscale
         img = np.array(img)  # convert image to numpy array
-        np.save(root_dir + '\\' + new_dir + '\\' +
-                label + '\\' + remove_extension(file), img)
+        np.save(root_dir + '\\' + new_dir + '\\' + remove_extension(file), img)
