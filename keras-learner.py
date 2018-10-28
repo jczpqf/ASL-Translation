@@ -4,9 +4,20 @@ from sklearn.model_selection import train_test_split
 from numpy import unique
 from utility import load_data, one_hot
 import numpy as np
+import argparse
 
-X, labels = load_data('./grey_images')
-X = X.reshape(-1, 25, 25, 1)
+
+parser = argparse.ArgumentParser(description='Parse potential arguments')
+parser.add_argument(
+    '--image_dir', type=str, help='the directory of the image',
+    default='grey_images_25')
+
+args = parser.parse_args()
+image_dir = args.image_dir
+
+X, labels = load_data(image_dir)
+length, width = X[0].shape
+X = X.reshape(-1, length, width, 1)
 X = X.astype('float32')
 X /= 255
 unique_y = unique(labels)
@@ -18,9 +29,7 @@ y = y.astype('float32')
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 
 model = Sequential()
-
-
-model.add(Flatten(input_shape=(25, 25, 1)))
+model.add(Flatten(input_shape=(length, width, 1)))
 model.add(Dense(512, activation='relu'))
 model.add(Dense(512, activation='relu'))
 model.add(Dense(num_unique_labels, activation='softmax'))
