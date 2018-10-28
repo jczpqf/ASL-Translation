@@ -16,7 +16,7 @@ def load_data(data_path, mode='r'):
         data = []
         label_data = os.listdir(data_path + '\\' + label)
         for file in label_data:
-            data.append(np.load(
-                data_path + '\\' + label + '\\' + file, mode=mode))
+            data.append(np.load(data_path + '\\' + label + '\\' + 
+                                file, mmap_mode =mode))
         data_dict[label] = data
     return data_dict
