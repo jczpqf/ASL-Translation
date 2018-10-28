@@ -11,9 +11,15 @@ parser = argparse.ArgumentParser(description='Parse potential arguments')
 parser.add_argument(
     '--image_dir', type=str, help='the directory of the image',
     default='grey_images_25')
+parser.add_argument('--batch_size', type=int, default=32)
+parser.add_argument('--epochs', type=int, default=10)
+parser.add_argument('--save_name', type=str, default=None)
 
 args = parser.parse_args()
 image_dir = args.image_dir
+batch_size = args.batch_size
+epochs = args.epochs
+save_name = args.save_name
 
 X, labels = load_data(image_dir)
 length, width = X[0].shape
@@ -38,8 +44,10 @@ model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-model.fit(X_train, y_train,
-          batch_size=64, epochs=10, verbose=1)
+model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1)
 
 score = model.evaluate(X_test, y_test, verbose=1)
 print(score)
+if save_name is not None:
+    model.save(save_name + "-model")
+    model.save_weights(save_name + "-weights")
