@@ -10,7 +10,7 @@ from PIL import Image
 
 parser = argparse.ArgumentParser(description='Parse potential arguments')
 parser.add_argument(
-    '--image_dir', type=str, help='the directory of the image',
+    '--image_dir', type=str, help='the directory of the images',
     default='raw_images')
 parser.add_argument(
     '--new_dir', type=str, help='the new director of the new images',
