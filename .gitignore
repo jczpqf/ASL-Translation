@@ -1,0 +1,5 @@
+
+# Ignore Vim files and Cutom backup files
+*.swp
+*.swo
+.*.*
