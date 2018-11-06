@@ -17,8 +17,9 @@ class NN(nn.Module):
             self.layers.append(nn.Linear(design[i], design[i + 1]))
 
     def forward(self, x):
-        for layer in self.layers:
-            x = F.leaky_relu(layer(x))
+        for layer in self.layers[:len(self.layers) - 1]:
+            x = F.relu(layer(x))
+        x = self.layers[len(self.layers) - 1](x)
         if len(x.shape) == 1:
             return F.softmax(x, 0)
         return F.softmax(x, 1)
