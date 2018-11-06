@@ -14,14 +14,16 @@ parser.add_argument(
 parser.add_argument('--batch_size', type=int, default=32)
 parser.add_argument('--epochs', type=int, default=10)
 parser.add_argument('--save_name', type=str, default=None)
+parser.add_argument('--sample_percent', type=float, default=1.0)
 
 args = parser.parse_args()
 image_dir = args.image_dir
 batch_size = args.batch_size
 epochs = args.epochs
 save_name = args.save_name
+sample_percent = args.sample_percent
 
-X, labels = load_data(image_dir)
+X, labels = load_data(image_dir, sample_percent=sample_percent)
 length, width = X[0].shape
 X = X.reshape(-1, length, width, 1)
 X = X.astype('float32')

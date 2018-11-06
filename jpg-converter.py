@@ -5,9 +5,9 @@ Run this file from the directory where the image folder is contained
 
 import os
 import argparse
-import random
 import numpy as np
 from PIL import Image
+from utility import sample
 
 parser = argparse.ArgumentParser(description='Parse potential arguments')
 parser.add_argument(
@@ -29,13 +29,6 @@ new_dir = args.new_dir
 sub_dir_labels = args.sub_dir_labels
 new_dim = args.new_dim
 sample_percent = args.sample_percent
-
-
-def sample(files):
-    if sample_percent == 1.0:
-        return files
-    sample_size = int(len(files) * sample_percent)
-    return random.sample(files, sample_size)
 
 
 def remove_extension(file_name):
@@ -72,7 +65,7 @@ if sub_dir_labels:
         except FileExistsError:  # if directory already exists thats ok
             pass
         files = os.listdir(root_dir + '\\' + image_dir + '\\' + label)
-        files = sample(files)
+        files = sample(files, sample_percent)
         for file in files:
             img = Image.open(root_dir + '\\' + image_dir + '\\' +
                              label + '\\' + file)  # open image
@@ -81,7 +74,7 @@ if sub_dir_labels:
                     label + '\\' + remove_extension(file), img)
 else:
     files = os.listdir(root_dir + '\\' + image_dir)
-    files = sample(files)
+    files = sample(files, sample_percent)
     for file in files:
         # open image
         img = Image.open(root_dir + '\\' + image_dir + '\\' + file)
