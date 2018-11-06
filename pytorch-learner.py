@@ -65,16 +65,19 @@ X_train, y_train = torch.Tensor(X_train), torch.Tensor(y_train)
 
 
 model = NN([length * width, 512, 512, num_unique_labels])
-op = torch.optim.Adam(model.parameters(), lr=.001)
+op = torch.optim.Adam(model.parameters(), lr=.01)
 loss_fn = nn.MSELoss()
 for epoch_num in range(epochs):
+    epoch_loss = 0
     training = batch_training_generator(X_train, y_train, batch_size)
     for x_set, y_set in training:
         op.zero_grad()
         output = model(x_set)
         loss = loss_fn(output, y_set)
+        epoch_loss += float(loss)
         loss.backward()
         op.step()
+    print(epoch_num, epoch_loss, accuracy(model, X_train, y_train))
 
 print(accuracy(model, X_test, y_test))
 if save_name is not None:
