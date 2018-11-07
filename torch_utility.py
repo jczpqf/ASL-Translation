@@ -7,6 +7,10 @@ import torch.nn.functional as F
 import pickle
 
 
+def flatten(input):
+    return input.view(input.shape[0], -1)
+
+
 class MLP(nn.Module):
     def __init__(self, design):
         super(MLP, self).__init__()
@@ -16,6 +20,8 @@ class MLP(nn.Module):
             self.layers.append(nn.Linear(design[i], design[i + 1]))
 
     def forward(self, x):
+        if len(x) >= 3:
+            x = flatten(x)
         for layer in self.layers[:len(self.layers) - 1]:
             x = F.relu(layer(x))
         x = self.layers[len(self.layers) - 1](x)
