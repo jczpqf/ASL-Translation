@@ -1,6 +1,6 @@
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
-from sklearn.model_selection import train_test_split
+from utility import train_test_split
 from numpy import unique
 from utility import load_data, one_hot
 import numpy as np
@@ -38,8 +38,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 
 model = Sequential()
 model.add(Flatten(input_shape=(length, width, 1)))
-model.add(Dense(512, activation='relu'))
-model.add(Dense(512, activation='relu'))
+model.add(Dense(256, activation='relu'))
+model.add(Dense(256, activation='relu'))
+model.add(Dense(256, activation='relu'))
 model.add(Dense(num_unique_labels, activation='softmax'))
 
 model.compile(loss='categorical_crossentropy',
