@@ -65,7 +65,7 @@ X_train, y_train = torch.Tensor(X_train), torch.Tensor(y_train)
 
 
 model = NN([length * width, 512, 512, num_unique_labels])
-op = torch.optim.Adam(model.parameters(), lr=.01)
+op = torch.optim.Adam(model.parameters(), lr=.001)
 loss_fn = nn.MSELoss()
 for epoch_num in range(epochs):
     epoch_loss = 0
