@@ -43,3 +43,13 @@ def sample(pop, sample_percent):
         return pop
     sample_size = int(len(pop) * sample_percent)
     return random.sample(pop, sample_size)
+
+
+def train_test_split(X, y, test_size=0.1):
+    N = len(X)
+    test_set_size = int(N * test_size)
+    test_indices = random.sample(range(0, N), test_set_size)
+    X_test, y_test = X[test_indices], y[test_indices]
+    train_indicies = list(set(range(0, N)) - set(test_indices))
+    X_train, y_train = X[train_indicies], y[train_indicies]
+    return X_train, X_test, y_train, y_test
