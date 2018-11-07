@@ -63,6 +63,8 @@ def accuracy(model, X, y):
     Calculates the accuracy of the model
     """
     X, y = check_convert(X), check_convert(y)
+    if len(y.shape) == 2:
+        y = torch.argmax(y, 1)
     output = model(X)
-    num_matches = torch.sum(torch.argmax(output, 1) == torch.argmax(y, 1))
+    num_matches = torch.sum(torch.argmax(output, 1) == y)
     return float(num_matches) / len(X)
