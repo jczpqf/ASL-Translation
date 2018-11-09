@@ -1,10 +1,9 @@
 import torch
 import torch.nn as nn
-from sklearn.model_selection import train_test_split
+from utility import train_test_split
 from numpy import unique
-from utility import load_data, one_hot, batch_training_generator
+from utility import load_data, batch_training_generator, one_hot
 from torch_utility import accuracy, MLP
-import numpy as np
 import argparse
 
 
@@ -26,22 +25,21 @@ sample_percent = args.sample_percent
 
 X, labels = load_data(image_dir, sample_percent=sample_percent)
 length, width = X[0].shape
-X = X.reshape(-1, length * width)
-X = X.astype('float32')
+X = torch.Tensor(X).view(-1, length*width).type(torch.float32)
 X /= 255
 unique_y = unique(labels)
 num_unique_labels = len(unique_y)
-mapping = {label: one_hot(i, num_unique_labels)
-           for i, label in enumerate(unique_y)}
-y = np.array([mapping[label] for label in labels])
-y = y.astype('float32')
+mapping = {label: i for i, label in enumerate(unique_y)}
+
+labels = torch.Tensor([mapping[label] for label in labels]).type(torch.long)
+y = torch.Tensor([one_hot(label, num_unique_labels)
+                  for label in labels]).type(torch.float)
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
-X_train, y_train = torch.Tensor(X_train), torch.Tensor(y_train)
 
-
-model = MLP([length * width, 256, num_unique_labels])
+N = len(X_train)
+model = MLP([length * width, 256, 256, 256, num_unique_labels])
 op = torch.optim.Adam(model.parameters(), lr=.001)
-loss_fn = nn.MSELoss()
+loss_fn = nn.MSELoss(reduction='sum')
 for epoch_num in range(epochs):
     epoch_loss = 0
     training = batch_training_generator(X_train, y_train, batch_size)
@@ -49,6 +47,7 @@ for epoch_num in range(epochs):
         op.zero_grad()
         output = model(x_set)
         loss = loss_fn(output, y_set)
+        loss /= N
         epoch_loss += float(loss)
         loss.backward()
         op.step()
