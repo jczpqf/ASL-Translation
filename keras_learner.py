@@ -34,7 +34,8 @@ mapping = {label: one_hot(i, num_unique_labels)
            for i, label in enumerate(unique_y)}
 y = np.array([mapping[label] for label in labels])
 y = y.astype('float32')
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1,
+                                                    shuffle=False)
 
 model = Sequential()
 model.add(Flatten(input_shape=(length, width, 1)))
@@ -47,7 +48,8 @@ model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1)
+model.fit(X_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1,
+          shuffle=True)
 
 score = model.evaluate(X_test, y_test, verbose=1)
 print(score)
