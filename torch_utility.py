@@ -3,35 +3,30 @@ functions that make life easier specific to pytorch
 """
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import pickle
 
 
-def flatten(input):
-    return input.view(input.shape[0], -1)
-
-
-class MLP(nn.Module):
-    def __init__(self, design):
-        super(MLP, self).__init__()
-        self.design = design
-        self.layers = nn.ModuleList()
-        for i in range(len(design) - 1):
-            self.layers.append(nn.Linear(design[i], design[i + 1]))
+class Sequential(nn.Module):
+    def __init__(self, *args):
+        super(Sequential, self).__init__()
+        self.args = args
+        self.layers = nn.ModuleList(self.args)
 
     def forward(self, x):
-        if len(x) >= 3:
-            x = flatten(x)
-        for layer in self.layers[:len(self.layers) - 1]:
-            x = F.relu(layer(x))
-        x = self.layers[len(self.layers) - 1](x)
-        if len(x.shape) == 1:
-            return F.softmax(x, 0)
-        return F.softmax(x, 1)
+        for layer in self.layers:
+            x = layer(x)
+        return x
+
+    def pop(self):
+        self.layers = self.layers[:len(self.layers) - 1]
+
+    def append(self, layer):
+        self.layers.append(layer)
 
     @property
     def weight(self):
-        return [layer.weight for layer in self.layers]
+        return [layer.weight for layer in self.layers
+                if type(layer) is nn.Linear]
 
     @weight.setter
     def weight(self, v):
@@ -39,14 +34,14 @@ class MLP(nn.Module):
 
     def save(self, name):
         torch.save(self.state_dict(), name + '.weights')
-        pickle.dump(self.design, open(name + '.params', 'wb'))
+        pickle.dump(self.args, open(name + '.params', 'wb'))
 
     @staticmethod
     def load(name):
         params = pickle.load(open(name + '.params', 'rb'))
-        mlp = MLP(params)
-        mlp.load_state_dict(torch.load(name + '.weights'))
-        return mlp
+        model = Sequential(*params)
+        model.load_state_dict(torch.load(name + '.weights'))
+        return model
 
 
 def check_convert(item):

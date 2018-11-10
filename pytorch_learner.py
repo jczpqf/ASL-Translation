@@ -2,8 +2,8 @@ import torch
 import torch.nn as nn
 from utility import train_test_split
 from numpy import unique
-from utility import load_data, batch_training_generator, one_hot
-from torch_utility import accuracy, MLP
+from utility import load_data, batch_training_generator
+from torch_utility import accuracy, Sequential
 import argparse
 
 
@@ -32,17 +32,24 @@ num_unique_labels = len(unique_y)
 mapping = {label: i for i, label in enumerate(unique_y)}
 
 labels = torch.Tensor([mapping[label] for label in labels]).type(torch.long)
-y = torch.Tensor([one_hot(label, num_unique_labels)
-                  for label in labels]).type(torch.float)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
+X_train, X_test, y_train, y_test = train_test_split(X, labels, test_size=0.1,
+                                                    shuffle=False)
 
 N = len(X_train)
-model = MLP([length * width, 256, 256, 256, num_unique_labels])
+model = Sequential(nn.Linear(length*width, 256),
+                   nn.ReLU(),
+                   nn.Linear(256, 256),
+                   nn.ReLU(),
+                   nn.Linear(256, 256),
+                   nn.ReLU(),
+                   nn.Linear(256, num_unique_labels),
+                   nn.LogSoftmax(dim=1))
 op = torch.optim.Adam(model.parameters(), lr=.001)
-loss_fn = nn.MSELoss(reduction='sum')
+loss_fn = nn.NLLLoss(reduction='sum')
 for epoch_num in range(epochs):
     epoch_loss = 0
-    training = batch_training_generator(X_train, y_train, batch_size)
+    training = batch_training_generator(X_train, y_train, batch_size,
+                                        shuffle=True)
     for x_set, y_set in training:
         op.zero_grad()
         output = model(x_set)
@@ -52,7 +59,8 @@ for epoch_num in range(epochs):
         loss.backward()
         op.step()
     print(epoch_num, epoch_loss, accuracy(model, X_train, y_train))
-
+model.pop()
+model.append(nn.Softmax(dim=1))
 print(accuracy(model, X_test, y_test))
 if save_name is not None:
     model.save(save_name)
