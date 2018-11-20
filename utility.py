@@ -30,16 +30,32 @@ def one_hot(one_index, size):
     return z
 
 
-def batch_training_generator(X, y, batch_size, shuffle=True):
-    last_index = 0
+def batch_generator(data, batch_size, shuffle=True):
+    """
+    if data is passed in as a list then data is modified, but not the elements
+    """
+    if type(data) is list:
+        N = len(data[0])
+    else:
+        N = len(data)
+        data = [data]
     if shuffle:
-        index_order = list(range(0, len(X)))
+        index_order = list(range(0, N))
         random.shuffle(index_order)
-        X, y = X[index_order], y[index_order]
-    for i in range(batch_size, len(X), batch_size):
-        yield X[last_index:i], y[last_index:i]
+        for i, d in enumerate(data):
+            data[i] = d[index_order]
+    last_index = 0
+    for i in range(batch_size, N, batch_size):
+        yield list(map(lambda sub: sub[last_index:i], data))
         last_index = i
-    yield X[last_index:], y[last_index:]
+    if last_index < N:
+        yield list(map(lambda sub: sub[last_index:], data))
+
+
+def batch_training_generator(X, y, batch_size, shuffle=True):
+    generator = batch_generator([X, y], batch_size, shuffle)
+    for x_set, y_set in generator:
+        yield x_set, y_set
 
 
 def sample(pop, sample_percent):
