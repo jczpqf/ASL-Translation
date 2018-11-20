@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.functional as F
+import torch.nn.functional as F
 from utility import batch_generator
 
 
@@ -12,10 +12,14 @@ class RestrictedBoltzmann(nn.Module):
 
     def forward(self, x):
         x = self.reduce(x)
-        return F.softmax(x)
+        return F.softmax(x, 1)
 
     def train(self, X, batch_size, epochs, op=None, loss_fn=None,
               verbose=True):
+        """
+        Trains the model to create lower dimensional latent features and
+        then uses the latent features to create the orginal features
+        """
         if op is None:
             op = torch.optim.Adam(self.parameters())
         if loss_fn is None:
@@ -35,3 +39,4 @@ class RestrictedBoltzmann(nn.Module):
                 op.step()
             if verbose:
                 print(epoch_num, epoch_loss)
+        return self
