@@ -4,9 +4,9 @@ import torch.nn.functional as F
 from utility import batch_generator
 
 
-class RestrictedBoltzmann(nn.Module):
+class SingleAutoEncoder(nn.Module):
     def __init__(self, input_size, output_size):
-        super(RestrictedBoltzmann, self).__init__()
+        super(SingleAutoEncoder, self).__init__()
         self.reduce = nn.Linear(input_size, output_size)
         self.restore = nn.Linear(output_size, input_size)
 

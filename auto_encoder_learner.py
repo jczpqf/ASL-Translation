@@ -1,6 +1,6 @@
 import torch
 from utility import load_data
-from restricted_boltzmann import RestrictedBoltzmann
+from auto_encoder import SingleAutoEncoder
 import argparse
 
 
@@ -28,5 +28,5 @@ input_size = length*width
 X = torch.Tensor(X).view(-1, input_size).type(torch.float32)
 X /= 255
 
-model = RestrictedBoltzmann(input_size, output_size)
+model = SingleAutoEncoder(input_size, output_size)
 model.train(X=X, batch_size=batch_size, epochs=epochs, verbose=True)
