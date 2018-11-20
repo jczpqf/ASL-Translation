@@ -3,7 +3,8 @@ import torch.nn as nn
 from utility import train_test_split
 from numpy import unique
 from utility import load_data, batch_training_generator
-from torch_utility import accuracy, Sequential, fully_connected
+from torch_utility import accuracy, fully_connected
+from sequential import Sequential
 import argparse
 
 
