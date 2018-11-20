@@ -4,15 +4,30 @@ import torch.nn.functional as F
 from utility import batch_generator
 
 
-class SingleAutoEncoder(nn.Module):
-    def __init__(self, input_size, output_size):
-        super(SingleAutoEncoder, self).__init__()
-        self.reduce = nn.Linear(input_size, output_size)
-        self.restore = nn.Linear(output_size, input_size)
+class AutoEncoder(nn.Module):
+    def __init__(self, encoder_layers):
+        super(AutoEncoder, self).__init__()
+        self.encoder_layers = nn.ModuleList()
+        self.decoder_layers = nn.ModuleList()
+        for i in range(len(encoder_layers) - 1):
+            self.encoder_layers.append(nn.Linear(encoder_layers[i],
+                                                 encoder_layers[i + 1]))
+        for i in range(len(encoder_layers) - 1, 0, -1):
+            self.decoder_layers.append(nn.Linear(encoder_layers[i],
+                                                 encoder_layers[i - 1]))
 
     def forward(self, x):
-        x = self.reduce(x)
-        return F.softmax(x, 1)
+        for layer in self.encoder_layers:
+            x = F.softmax(layer(x), 1)
+        return x
+
+    def encode(self, x):
+        return self.forward(x)
+
+    def decode(self, x):
+        for layer in self.decoder_layers[:-1]:
+            x = F.softmax(layer(x), 1)
+        return self.decoder_layers[-1](x)
 
     def train(self, X, batch_size, epochs, op=None, loss_fn=None,
               verbose=True):
@@ -31,7 +46,7 @@ class SingleAutoEncoder(nn.Module):
             for x_set in training:
                 x_set = x_set[0]
                 op.zero_grad()
-                output = self.restore(self.forward(x_set))
+                output = self.decode(self.forward(x_set))
                 loss = loss_fn(output, x_set)
                 loss /= N
                 epoch_loss += float(loss)
