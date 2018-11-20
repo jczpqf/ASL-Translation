@@ -23,7 +23,7 @@ class RestrictedBoltzmann(nn.Module):
         N = len(X)
         for epoch_num in range(epochs):
             epoch_loss = 0
-            training = batch_generator(X, batch_size, shuffle=True)
+            training = batch_generator(X, batch_size, shuffle=True)[0]
             for x_set in training:
                 op.zero_grad()
                 output = self.restore(self.forward(x_set))
