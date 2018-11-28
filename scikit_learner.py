@@ -23,8 +23,11 @@ classifier_type = args.classifier_type
 classifier_args = args.classifier_args
 
 X, labels = load_data(image_dir, sample_percent=sample_percent)
-length, width = X[0].shape
-X = X.reshape(-1, length * width)
+if len(X[0].shape) != 1:
+    dim = 1
+    for d in X[0].shape:
+        dim *= d
+    X = X.reshape(-1, dim)
 X = X.astype('float32')
 X /= 255
 X_train, X_test, y_train, y_test = train_test_split(X, labels, test_size=0.1,
