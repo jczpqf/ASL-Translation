@@ -7,20 +7,26 @@ import numpy as np
 import random
 
 
-def load_data(data_path, mode='r', sample_percent=1.0):
+def load_data(data_path, mode='r', sample_percent=1.0, return_names=False):
     """
     default mode is read only
     """
     X = []
     y = []
+    if return_names:
+        names = []
     label_dirs = os.listdir(data_path)
     for label in label_dirs:
         label_data = os.listdir(data_path + '\\' + label)
         label_data = sample(label_data, sample_percent)
         y += [label] * len(label_data)
+        if return_names:
+            names += label_data
         for file in label_data:
             X.append(np.load(data_path + '\\' + label + '\\' +
                              file, mmap_mode=mode))
+    if return_names:
+        return np.array(X), np.array(y), np.array(names)
     return np.array(X), np.array(y)
 
 
@@ -32,7 +38,8 @@ def one_hot(one_index, size):
 
 def batch_generator(data, batch_size, shuffle=True):
     """
-    if data is passed in as a list then data is modified, but not the elements
+    if data is passed in as a list then data is modified, but not the orginal
+    elements in the list
     """
     if type(data) is list:
         N = len(data[0])
