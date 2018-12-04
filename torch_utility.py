@@ -5,6 +5,14 @@ import torch
 import torch.nn as nn
 
 
+class Flatten(nn.Module):
+    def __init__(self):
+        super(Flatten, self).__init__()
+
+    def forward(self, x):
+        return x.view(x.shape[0], -1)
+
+
 def fully_connected(layout, activation=nn.ReLU(), last_layer_activation=None):
     lst = []
     for i in range(len(layout) - 2):
