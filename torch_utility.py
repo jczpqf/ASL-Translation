@@ -3,6 +3,7 @@ functions that make life easier specific to pytorch
 """
 import torch
 import torch.nn as nn
+from utility import batch_training_generator
 
 
 class Flatten(nn.Module):
@@ -33,13 +34,16 @@ def check_convert(item):
     return item
 
 
-def accuracy(model, X, y):
+def accuracy(model, X, y, batch_size=32):
     """
     Calculates the accuracy of the model
     """
     X, y = check_convert(X), check_convert(y)
     if len(y.shape) == 2:
         y = torch.argmax(y, 1)
-    output = model(X)
-    num_matches = torch.sum(torch.argmax(output, 1) == y)
-    return float(num_matches) / len(X)
+    num_matches = 0
+    batch_gen = batch_training_generator(X, y, batch_size, shuffle=False)
+    for x_data, y_data in batch_gen:
+        output = model(x_data)
+        num_matches += int(torch.sum(torch.argmax(output, 1) == y_data))
+    return num_matches / len(X)
