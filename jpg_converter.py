@@ -17,7 +17,7 @@ parser.add_argument(
     '--new_dir', type=str, help='the new director of the new images',
     default='grey_images')
 parser.add_argument(
-    '--sub_dir_labels', type=bool, default=True
+    '--sub_dir_labels', type=str, default='True', choices=['True', 'False']
 )
 parser.add_argument('--new_dim', type=int, default=25)
 parser.add_argument('--sample_percent', type=float, default=1.0)
@@ -26,7 +26,7 @@ args = parser.parse_args()
 
 image_dir = args.image_dir
 new_dir = args.new_dir
-sub_dir_labels = args.sub_dir_labels
+sub_dir_labels = args.sub_dir_labels == 'True'
 new_dim = args.new_dim
 sample_percent = args.sample_percent
 
