@@ -30,6 +30,21 @@ def load_data(data_path, mode='r', sample_percent=1.0, return_names=False):
     return np.array(X), np.array(y)
 
 
+def load_data_flat(data_path, mode='r', sample_percent=1.0,
+                   return_names=False):
+    """
+    default mode is read only
+    """
+    X = []
+    files = os.listdir(data_path)
+    files = sample(files, sample_percent)
+    for file in files:
+        X.append(np.load(data_path + '\\' + file, mmap_mode=mode))
+    if return_names:
+        return np.array(X), np.array(files)
+    return np.array(X)
+
+
 def one_hot(one_index, size):
     z = np.zeros(size)
     z[one_index] = 1
