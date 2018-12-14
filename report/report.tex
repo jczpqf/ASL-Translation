@@ -47,7 +47,7 @@
     sparse, largely outdated, and do not agree on a specific number, most estimates of complete
     or partial hearing loss are significantly less than 0.5\% of the American population, and
     the percentage of American Sign Language users is a bit higher than that estimate but still
-    less than 0.5\%\textbf{\underline{[1][2]}}. This creates the opportunity for communication
+    less than 0.5\%. This creates the opportunity for communication
     failures to arise. Granted, most individuals should be able to communicate in written form,
     but this is usually far slower than communicating verbally or pictorially (as in ASL).
     In this work, we approached this problem by applying different types of neural networks
@@ -57,7 +57,7 @@
 \section{Important Definitions}
     \subsection{American Sign Language (ASL)}
         A version of sign language used primarily in America. Note that it is qualified with
-        "American" because dialects of sign language vary wildly between countries and cultures,
+        ``American'' because dialects of sign language vary wildly between countries and cultures,
         and this paper deals only with this specific version.
 
     \subsection{Linear Layer}\label{def:linearlayer}
@@ -104,33 +104,31 @@
 
     \subsection{One-hot Encoding}
         A bitwise representation of categorical data that requires only one bit to be set and 
-        the rest to be cleared. Named as such because only a single bit is "hot", or, put more 
-        elegantly, there is "One hot" bit.
-
-\section{Problem Statement}
+        the rest to be cleared. Named as such because only a single bit is ``hot'', or, put more 
+        elegantly, there is ``One hot'' bit.
 
 \section{Technical Details}
     \subsection{Data Preprocessing}
     The data used to train the models was originally in the form of $200x200$ JPEG images with 
     three different channels (standard RGB). The images were immediately converted to grayscale, 
     in order to normalize the colors. They were then downsampled to a resolution of $32 \times 32$. At 
-    this point, the image has been downscaled from $200 \times 200 \times 3$. An example of this is
-    shown in Figure \ref{fig:a_images}.
-$32 \times 32 \times 1$. 
-\begin{figure}[h]
-    \centering {
-        \includegraphics[width=0.25\textwidth]{A_full}
-        \includegraphics[width=0.25\textwidth]{A_gray}
-        \includegraphics[width=0.25\textwidth]{A_down}
-    }
-    \caption{}
-    \label{fig:a_images}
-\end{figure}
+    this point, the image has been downscaled from $200 \times 200 \times 3$ to $32 \times 32 \times 1$. 
+    An example of this for the letter ``A'' is shown in Figure \ref{fig:a_images}.
+ 
+    \begin{figure}[h]
+        \centering {
+            \includegraphics[width=0.25\textwidth]{A_full}
+            \includegraphics[width=0.25\textwidth]{A_gray}
+            \includegraphics[width=0.25\textwidth]{A_down}
+        }
+        \caption{Image preprocessing intermediate results}
+        \label{fig:a_images}
+    \end{figure}
     
     To further simplify the input to the NN, all of these values are divided
     by 255 (the maximum possible value of an individual pixel), and stored in a $32 \times 32$ 
     32-bit floating-point matrix. Additionally, the label of the images is matched to a unique 
-    integer value and one-hot encoding vector for training. For example: "A" is matched to a value
+    integer value and one-hot encoding vector for training. For example: ``A'' is matched to a value
     of 0, and its one-hot encoding vector (of size 29) is $[1,0,0,\ldots,0]$.
 
     \subsection{Model Architectures}
@@ -148,7 +146,8 @@ $32 \times 32 \times 1$.
             \item $[256, 29]$
             \item Softmax
         \end{itemize}
-       
+      
+        \pagebreak
         \subsubsection{Convolutional Neural Network}
         \begin{itemize}[label=$\rightarrow$]
             \item Six convolutional filters $(kernel size=5\times5,\ stride = 1)$ no padding, each biased
@@ -181,7 +180,7 @@ $32 \times 32 \times 1$.
 
         \subsubsection{Side Effects}\label{sec:sideeffects}
             While our decision to use this subset of signs is not unreasonable, the dataset
-            we used to train our models was of a poor quality and generality, which we did
+            we used to train our models was of a poor quality and diversity, which we did
             not realize or even guess until it was far too late to find other data. Our best
             guess for this reason is that source images for each sign were all captured as
             the frames of a video where the creator used the same hand in the same room, and
@@ -253,8 +252,8 @@ $32 \times 32 \times 1$.
         While the results of the experiments are very promising, the results of the models
         being applied to external data sources are far less accurate. We suspect this is due
         to the reasons outlined in section \ref{sec:sideeffects}. For example, using the
-        real-world image of the ASL sign for "Y" in Figure \ref{fig:y_images} led to the classifier
-        being sure that it was of the sign for "P", which is obviously not correct. A comparison
+        real-world image of the ASL sign for ``Y'' in Figure \ref{fig:y_images} led to the classifier
+        being sure that it was of the sign for ``P'', which is obviously not correct. A comparison
         of the two is given in Figure \ref{fig:ypcompare} to illustrate the difference.
 
         \begin{figure}[h]
@@ -277,8 +276,6 @@ $32 \times 32 \times 1$.
         \end{figure}
 
 
-\section{Related Work}
-
 \section{Conclusions}
 From the results of our experiments, it appears that it is indeed possible and reasonable to
 classify, and thus translate ASL signs to their corresponding words. Of course, this is a very
@@ -300,7 +297,6 @@ this system practical for a wider range of signs beyond the alphabet. This is di
 
 \section{Future Work}
 Further directions of study in this vein of research is both required and readily available. 
-
 The first, and most important thing that must done however, is more diverse data must be generated.
 Options for this include a custom setup, where we would take images of our own hands in different
 settings, with far more variables being changed than in the data used in these experiments. One 
@@ -319,8 +315,5 @@ to reasonably successful in practice, given that the image is already accompanie
 labels. This was not pursued in this series of experiments because the specialized labels
 required more information than we could reasonably require with the time we had.
 
-
-\section*{References}
-TODO: either manually insert this stuff, or figure out how to use bibtex
 
 \end{document}
