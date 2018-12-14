@@ -1,3 +1,9 @@
+# Binary and pseudo-binary filetype. Just going to cause problems
+*.pdf
+
+# LaTeX output files
+*.aux
+*.log
 
 # Ignore Vim files and Cutom backup files
 *.swp
